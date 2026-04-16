@@ -5,10 +5,9 @@ from PIL import Image
 DATASET_PATH = "data"
 os.makedirs(DATASET_PATH, exist_ok=True)
 
-THRESHOLD = 0.45
+THRESHOLD = 0.55   # 🔥 stricter threshold
 
 
-# ✅ SAVE TRAINING DATA
 def save_training_data(label, image_path):
     label_path = os.path.join(DATASET_PATH, label)
     os.makedirs(label_path, exist_ok=True)
@@ -17,7 +16,6 @@ def save_training_data(label, image_path):
     Image.open(image_path).save(os.path.join(label_path, filename))
 
 
-# ✅ COUNT DATA
 def count_data():
     counts = {}
     for label in os.listdir(DATASET_PATH):
@@ -25,14 +23,12 @@ def count_data():
     return counts
 
 
-# ✅ PREPROCESS IMAGE
 def preprocess(path):
     img = Image.open(path).convert("L").resize((64, 64))
     img = np.array(img) / 255.0
     return img.flatten()
 
 
-# ✅ COMPARE HISTOGRAM
 def compare(img1, img2):
     hist1, _ = np.histogram(img1, bins=50, range=(0, 1))
     hist2, _ = np.histogram(img2, bins=50, range=(0, 1))
@@ -60,25 +56,26 @@ def predict_image(image_path):
                 score = compare(input_img, stored_img)
                 scores.append(score)
 
+            # 🔥 skip weak labels
             if len(scores) < 2:
-                continue  # 🔥 skip weak dataset
+                continue
 
-            top_score = max(scores)   # 🔥 IMPORTANT CHANGE
+            top_score = max(scores)
 
             if top_score > best_score:
                 best_score = top_score
                 best_label = label
 
-        # 🔥 STRONG UNKNOWN FILTER
+        # 🔥 STRONG UNKNOWN
         if best_score < 0.55:
             return "Unknown ❓", round(best_score * 100, 2)
 
-        # 🔥 LOW CONFIDENCE RANGE
+        # 🔥 LOW CONFIDENCE
         if best_score < 0.65:
             return best_label + " (Low Confidence)", round(best_score * 100, 2)
 
         return best_label, round(best_score * 100, 2)
 
     except Exception as e:
-        print(e)
+        print("ERROR:", e)
         return "Error", 0
