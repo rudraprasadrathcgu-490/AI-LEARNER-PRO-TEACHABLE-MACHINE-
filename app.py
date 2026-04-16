@@ -20,18 +20,14 @@ def train():
         file = request.files.get("image")
 
         if not label or not file:
-            return render_template("train.html",
-                                   error="⚠️ Fill all fields",
-                                   data=count_data())
+            return render_template("train.html", error="⚠️ Fill all fields", data=count_data())
 
         path = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(path)
 
         save_training_data(label, path)
 
-        return render_template("train.html",
-                               success="✅ Learned!",
-                               data=count_data())
+        return render_template("train.html", success="✅ Learned!", data=count_data())
 
     return render_template("train.html", data=count_data())
 
@@ -41,19 +37,14 @@ def predict():
     file = request.files.get("image")
 
     if not file:
-        return render_template("index.html",
-                               error="⚠️ Upload image",
-                               data=count_data())
+        return render_template("index.html", error="⚠️ Upload image", data=count_data())
 
     path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(path)
 
     label, confidence = predict_image(path)
 
-    return render_template("result.html",
-                           image=path,
-                           label=label,
-                           confidence=confidence)
+    return render_template("result.html", image=path, label=label, confidence=confidence)
 
 
 if __name__ == "__main__":
