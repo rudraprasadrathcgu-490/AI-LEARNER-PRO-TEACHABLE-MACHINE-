@@ -17,18 +17,27 @@ def save_training_data(label, image_path):
     Image.open(image_path).save(os.path.join(label_path, filename))
 
 
-# ✅ COUNT DATA (FIXED FOR .gitkeep)
+# ✅ COUNT DATA (FULLY SAFE)
 def count_data():
     counts = {}
 
-    for label in os.listdir(DATASET_PATH):
-        label_path = os.path.join(DATASET_PATH, label)
+    try:
+        for label in os.listdir(DATASET_PATH):
+            label_path = os.path.join(DATASET_PATH, label)
 
-        # 🔥 ignore files like .gitkeep
-        if not os.path.isdir(label_path):
-            continue
+            # 🔥 Ignore files like .gitkeep
+            if not os.path.isdir(label_path):
+                continue
 
-        counts[label] = len(os.listdir(label_path))
+            files = [
+                f for f in os.listdir(label_path)
+                if os.path.isfile(os.path.join(label_path, f))
+            ]
+
+            counts[label] = len(files)
+
+    except Exception as e:
+        print("COUNT ERROR:", e)
 
     return counts
 
@@ -51,7 +60,7 @@ def compare(img1, img2):
     return np.sum(np.minimum(hist1, hist2))
 
 
-# ✅ PREDICT (FULL FIXED)
+# ✅ PREDICT (FULLY SAFE)
 def predict_image(image_path):
     try:
         input_img = preprocess(image_path)
@@ -62,7 +71,7 @@ def predict_image(image_path):
         for label in os.listdir(DATASET_PATH):
             label_path = os.path.join(DATASET_PATH, label)
 
-            # 🔥 skip .gitkeep
+            # 🔥 Ignore non-folder (like .gitkeep)
             if not os.path.isdir(label_path):
                 continue
 
@@ -70,8 +79,11 @@ def predict_image(image_path):
 
             for file in os.listdir(label_path):
                 path = os.path.join(label_path, file)
-                stored_img = preprocess(path)
 
+                if not os.path.isfile(path):
+                    continue
+
+                stored_img = preprocess(path)
                 score = compare(input_img, stored_img)
                 scores.append(score)
 
@@ -95,5 +107,5 @@ def predict_image(image_path):
         return best_label, round(best_score * 100, 2)
 
     except Exception as e:
-        print("ERROR:", e)
+        print("PREDICT ERROR:", e)
         return "Error", 0
