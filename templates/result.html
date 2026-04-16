@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen">
+
+    <div class="flex justify-between p-4 bg-black/30">
+        <a href="/" class="bg-white text-black px-3 py-1 rounded">⬅ Home</a>
+        <h1>Result</h1>
+    </div>
+
+    <div class="flex justify-center mt-10">
+
+        <div class="bg-white/10 p-6 rounded-xl text-center w-[420px]">
+
+            <img src="/{{ image }}" class="w-40 mx-auto mb-4">
+
+            <h2 class="text-xl font-bold">{{ label }}</h2>
+
+            {% if label == "Unknown ❓" %}
+            <p class="text-red-400 mt-2">⚠️ Not trained</p>
+            {% elif "Low Confidence" in label %}
+            <p class="text-yellow-400 mt-2">⚠️ Low confidence</p>
+            {% else %}
+            <p class="text-green-400 mt-2">✅ High confidence</p>
+            {% endif %}
+
+            <div class="w-full bg-gray-700 h-3 rounded mt-4">
+                <div class="bg-green-500 h-3 rounded" style="width: {{ confidence }}%"></div>
+            </div>
+
+            <p class="mt-2">{{ confidence }}%</p>
+
+            <div class="mt-4">
+                <a href="/" class="bg-indigo-500 px-4 py-2 rounded">Try Again</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
