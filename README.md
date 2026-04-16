@@ -8,7 +8,7 @@ AI Learner Pro is an interactive web-based application that allows users to trai
 
 ## 🌐 Live Demo
 
-🔗 https://your-render-link-here.onrender.com
+🔗 https://ai-learner-pro-teachable-machine.onrender.com/
 
 ---
 
